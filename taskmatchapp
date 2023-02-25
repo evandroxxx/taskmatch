@@ -1,0 +1,131 @@
+import React, { useState, useEffect } from 'react';
+import { View, ImageBackground, Image, TextInput, TouchableOpacity, Text, StyleSheet } from 'react-native';
+import SplashScreen from './screens/SplashScreen';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import CadastroScreen from './screens/CadastroScreen'; // Importando a tela de cadastro
+const backgroundImage = require('./assets/bg.png');
+const logoImage = require('./assets/logow.png');
+const Stack = createStackNavigator();
+
+const LoginScreen = ({ navigation }) => {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleLogin = () => {
+    // fazer uma chamada POST para o backend PHP com as credenciais de login
+    console.log('Fazendo login com', username, password);
+
+    // navegar para a tela da WebView
+ 
+  };
+
+  const handleCadastro = () => {
+    // fazer uma chamada POST para o backend PHP para criar uma nova conta de usuário
+    console.log('Criando nova conta para', username, password);
+      navigation.navigate('CadastroScreen');
+
+  };
+
+  return (
+    <ImageBackground source={backgroundImage} style={styles.backgroundImage}>
+      <View style={styles.container}>
+        <Image source={logoImage} style={styles.logo} />
+        <TextInput
+          style={styles.input}
+          placeholder="Nome de usuário"
+          value={username}
+          onChangeText={setUsername}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Senha"
+          secureTextEntry={true}
+          value={password}
+          onChangeText={setPassword}
+        />
+        <TouchableOpacity style={styles.button} onPress={handleLogin}>
+          <Text style={styles.buttonText}>Entrar</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.signupButton} onPress={handleCadastro}>
+          <Text style={styles.signupText}>Não tem uma conta? Cadastre-se aqui</Text>
+        </TouchableOpacity>
+      </View>
+    </ImageBackground>
+  );
+};
+
+const App = () => {
+  const [showSplash, setShowSplash] = useState(true);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setShowSplash(false);
+    }, 3000); // mostra a splash screen por 3 segundos
+  }, []);
+
+  if (showSplash) {
+    return <SplashScreen />;
+  }
+
+  return (
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="LoginScreen">
+        <Stack.Screen name="LoginScreen" component={LoginScreen}  options={{ headerShown: false }}/>
+        <Stack.Screen name="Cadastro" component={CadastroScreen}  options={{ headerShown: false }} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+  
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  backgroundImage: {
+    flex: 1,
+    resizeMode: 'cover',
+    justifyContent: 'center',
+  },
+  logo: {
+    width: 150,
+    height: 150,
+    marginBottom: 50,
+  },
+  input: {
+    width: '80%',
+    height: 50,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 25,
+    marginBottom: 20,
+    paddingLeft: 20,
+    paddingRight: 20,
+  },
+  button: {
+    width: '80%',
+    height: 50,
+    backgroundColor: '#333333',
+    borderRadius: 25,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 20,
+    opacity: 0.5, // aqui está a definição da opacidade
+  },
+  buttonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+  },
+  signupButton: {
+    marginTop: 20,
+  },
+  signupText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    textDecorationLine: 'underline',
+}
+});
+
+export default App;
