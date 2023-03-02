@@ -1,46 +1,43 @@
 import React, { useState } from 'react';
+import ReactDOM from 'react-dom';
 import { View, ImageBackground, Image, TextInput, TouchableOpacity, Text, StyleSheet, Button } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
+import { useNavigation } from '@react-navigation/native';
 import LoginScreen from './LoginScreen';
 
 const backgroundImage = require('../assets/bg.png');
 const logoImage = require('../assets/logosmall.png');
 const Stack = createStackNavigator();
 
-const CadastroScreen = ({ navigation }) => {
+const CadastroScreen = () => {
+  const navigation = useNavigation();
   const [nome, setNome] = useState('');
   const [password, setPassword] = useState('');
   const [endereco, setEndereco] = useState('');
   const [email, setEmail] = useState('');
   const [telefone, setTelefone] = useState('');
 
-  const handleCadastro = async () => {
-    // construir o objeto com as informações do usuário
-    const usuario = {
-      nome: nome,
-      password: password,
-      endereco: endereco,
-      email: email,
-      telefone: telefone
-    };
+  const cadastrar = async () => {
+    try {
+      const response = await fetch('http://localhost/xampp/takemeup/conn/cadastro.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          nome,
+          password,
+          endereco,
+          email,
+          telefone
+        })
+      });
+      const data = await response.json();
+      console.log(data);
 
-    // fazer a requisição POST para o backend PHP
-    const response = await fetch('http://localhost/xampp/takemeup/conn/cadastro.php', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(usuario)
-    });
-
-    // verificar se a requisição foi bem sucedida
-    if (response.ok) {
-      // o usuário foi cadastrado com sucesso
-      console.log('Usuário cadastrado com sucesso!');
-      navigation.navigate('LoginScreen');
-    } else {
-      // ocorreu um erro ao cadastrar o usuário
-      console.log('Erro ao cadastrar usuário!');
+      navigation.navigate('WebViewScreen', { uri: 'http://localhost/xampp/takemeup/teste.php' });
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -96,13 +93,7 @@ const CadastroScreen = ({ navigation }) => {
 </ImageBackground>
 </View> 
   );
-  return (
-    <View>
-      {response !== '' && (
-        <WebView source={{ uri: 'http://localhost/xampp/takemeup/teste.php' }} />
-      )}
-    </View>
-  );
+  
 };
 
 const styles = StyleSheet.create({
