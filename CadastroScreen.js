@@ -9,22 +9,22 @@ const backgroundImage = require('../assets/bg.png');
 const logoImage = require('../assets/logosmall.png');
 const Stack = createStackNavigator();
 
-const CadastroScreen = () => {
+function CadastroScreen() {
   const navigation = useNavigation();
   const [nome, setNome] = useState('');
   const [password, setPassword] = useState('');
   const [endereco, setEndereco] = useState('');
   const [email, setEmail] = useState('');
   const [telefone, setTelefone] = useState('');
-
-  const cadastrar = async () => {
-    try {
-      const response = await fetch('http://localhost/xampp/takemeup/conn/cadastro.php', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
+//http://localhost/xampp/takemeup/conn/cadastro.php
+async function cadastrarUsuario() {
+  try {
+    const response = await fetch('http://localhost/xampp/takemeup/conn/cadastro.php', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
           nome,
           password,
           endereco,
@@ -32,8 +32,8 @@ const CadastroScreen = () => {
           telefone
         })
       });
-      const data = await response.json();
-      console.log(data);
+      const json = await response.json();
+      console.log(json);
 
       navigation.navigate('WebViewScreen', { uri: 'http://localhost/xampp/takemeup/teste.php' });
     } catch (error) {
