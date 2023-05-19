@@ -1,0 +1,183 @@
+import React, { useState } from 'react';
+import { View, ImageBackground, Image, TextInput, TouchableOpacity, Text, StyleSheet, Alert, Button } from 'react-native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { useNavigation } from '@react-navigation/native';
+import WebViewScreen from './WebVScreen';
+
+const backgroundImage = require('../assets/bg.png');
+const logoImage = require('../assets/logosmall.png');
+const Stack = createStackNavigator();
+
+function handleEnviar(username, password, navigation) {
+  console.log('Enviando requisição GET...');
+  console.log('Dados do formulário:', {
+    username: username,
+    password: password
+  });
+  console.log('URL do servidor:', `http://192.168.15.121/xampp/task/conn/conecta.php?username=${username}&password=${password}`);
+
+  fetch(`http://192.168.15.121/xampp/task/conn/conecta.php?username=${username}&password=${password}`, {
+    method: 'GET'
+  })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error(response.statusText);
+    }
+    return response.json();
+  })
+  .then(data => {
+    if (data.success) {
+      navigation.navigate('WebViewScreen', { uri: 'http://192.168.15.121/xampp/task/painel.php' });
+    
+    } else {
+      Alert.alert('Erro', data.message);
+    }
+  })
+  .catch(error => {
+    console.error('Ocorreu um erro ao fazer login:', error);
+    Alert.alert('Erro', 'Usuário ou senha incorretos');
+  });
+  
+  
+
+}
+
+
+const TelaCadastro = () => {
+  // fazer uma chamada POST para o backend PHP para criar uma nova conta de usuário
+  console.log('Criando nova conta para', username, password);
+  navigation.navigate('CadastroScreen');
+};
+const TelaUm = () => {
+
+  navigation.navigate('MyOptionScreen');
+
+};
+function LoginScreen(){
+  const navigation = useNavigation();
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+
+  return (
+    <View style={styles.container}>
+      <ImageBackground source={backgroundImage} style={styles.backgroundImage}>
+        <View style={styles.logoContainer}>
+          <Image source={logoImage} style={styles.logo} />
+        </View>
+
+        <View style={styles.formContainer}>
+        <Text style={styles.title}>Área do Cliente</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Username"
+            value={username}
+            onChangeText={setUsername}
+            autoCapitalize="none"
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Senha"
+            secureTextEntry={true}
+            value={password}
+            onChangeText={setPassword}
+            autoCapitalize="none"
+            keyboardType="numeric"
+            maxLength={6}
+            
+          />
+          <TouchableOpacity style={styles.button} onPress={() => handleEnviar(username, password, navigation)}>
+            <Text style={styles.buttonText}>Login</Text>
+          </TouchableOpacity>  
+         <TouchableOpacity onPress={(TelaCadastro) => navigation.navigate('CadastroScreen')} style={styles.link}>
+    <Text style={styles.linkText}>Não tem uma conta? Cadastre-se aqui!</Text>
+  </TouchableOpacity> 
+         <TouchableOpacity onPress={(TelaUm) => navigation.navigate('MyOptionScreen')} style={styles.link}>
+    <Text style={styles.linkText}>Quer Anunciar seu Comércio? clique aqui!</Text>
+  </TouchableOpacity>
+        </View>
+      </ImageBackground>
+    </View> 
+  );
+};
+const styles = StyleSheet.create({
+   link:{
+    color: '#FFFFFF',
+    fontSize: 14,
+  },
+  linkText:{
+    color: '#FFFFFF',
+    fontSize: 14,
+    marginTop: 5,
+  },
+  container: {
+    flex: 1,
+  },
+  backgroundImage: {
+    flex: 1,
+    resizeMode: 'cover',
+    justifyContent: 'center',
+  },
+  logoContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop:80,
+  },
+  logo: {
+    width: 190,
+    height: 220,
+  },
+  formContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    marginHorizontal: 15,
+    marginBottom:150,
+  },
+  title: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    textAlign: 'center',
+    color: '#ffffff',
+  },
+  input: {
+    backgroundColor: '#FFF',
+    borderColor: '#CCC',
+    borderWidth: 1,
+    borderRadius: 5,
+    height: 40,
+    paddingHorizontal: 10,
+    marginBottom: 10,
+  },
+  button: {
+    width: '100%',
+    height: 50,
+    backgroundColor: '#333333',
+    borderRadius: 25,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 5,
+    opacity: 0.5, // aqui está a definição da opacidade
+  },
+  buttonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+  },
+  
+  buttonlogin: {
+    width: '100%',
+    height: 50,
+    backgroundColor: '#E0A000',
+    borderRadius: 25,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 5,
+    opacity: 0.5, // aqui está a definição da opacidade
+  },
+  buttonTextlogin: {
+    color: '#FFFFFF',
+    fontSize: 16,
+  },
+});
+
+export default LoginScreen;
